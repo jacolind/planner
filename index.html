@@ -230,6 +230,7 @@ select{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:
             <button class="btn" id="rL15" aria-label="Rotate left 15 degrees">⟲ 15°</button>
             <button class="btn" id="rR15" aria-label="Rotate right 15 degrees">⟳ 15°</button>
             <button class="btn" id="rR90" aria-label="Rotate right 90 degrees">⟳ 90°</button>
+            <button class="btn" id="mir" type="button" hidden aria-label="Put the chaise on the other side">Mirror</button>
           </div>
           <div class="grid2">
             <label class="f">Source<select id="sSrc"><option value="IKEA">IKEA, new</option><option value="Second-hand">Second-hand</option><option value="Other">Other shop</option><option value="Owner">Owner's, free</option></select></label>
@@ -354,6 +355,9 @@ const LIB = [
   {k:"Sofa, 3 seats",w:2.18,d:0.88,h:0.78,s:"sofa",c:"sofa"},
   {k:"Sofa, 3 seats",w:1.98,d:0.99,h:0.83,s:"sofa",c:"sofa"},
   {k:"Sofa, 2 seats",w:1.80,d:0.88,h:0.80,s:"sofa",c:"sofa"},
+  {k:"Sofa, L-shaped",w:2.80,d:1.63,h:0.83,s:"lsofa",c:"sofa",bd:0.95,cw:1.00},
+  {k:"Sofa, L-shaped",w:2.66,d:1.64,h:0.83,s:"lsofa",c:"sofa",bd:0.98,cw:1.00},
+  {k:"Sofa, L-shaped sofa-bed",w:2.30,d:1.51,h:0.86,s:"lsofa",c:"sofa",bd:0.88,cw:0.88},
   {k:"Armchair",w:0.79,d:0.82,h:0.80,s:"chair",c:"sofa2"},
   {k:"Dining chair",w:0.45,d:0.52,h:0.85,s:"chair",c:"oak",small:1},
   {k:"Desk chair",w:0.70,d:0.70,h:1.25,s:"hm",c:"mesh",small:1},
@@ -460,7 +464,7 @@ const OLD_STARTER_5A = [
  ["Kiteboard · 145×43",3.31,9.325,90],["Kite backpack · 65×40",3.75,9.225,90],["Kite backpack · 65×40",4.1,9.225,90]
 ];
 let uid=1;
-function mk(name,x,y,r,label,extra){ const b=BYNAME[name]; return Object.assign({id:uid++,n:label||name,base:name,x,y,r:r||0,w:b.w,d:b.d,h:b.h,e:b.e||0,s:b.s,c:b.c,f:b.f||"",stand:b.stand||0,small:b.small||0,src:b.own?"Owner":"IKEA",price:b.own?0:null,url:"",contact:"",fb:""},extra||{}); }
+function mk(name,x,y,r,label,extra){ const b=BYNAME[name]; return Object.assign({id:uid++,n:label||name,base:name,x,y,r:r||0,w:b.w,d:b.d,h:b.h,e:b.e||0,s:b.s,c:b.c,f:b.f||"",stand:b.stand||0,small:b.small||0,bd:b.bd||0,cw:b.cw||0,mir:0,src:b.own?"Owner":"IKEA",price:b.own?0:null,url:"",contact:"",fb:""},extra||{}); }
 const STARTER_3B = [
  ["Sofa, 2 seats · 180×88",11.85,0.958,0],["Rug · 195×133",11.85,2.0,0],["Coffee table · 90×55",11.85,2.0,0],
  ["TV bench · 120×40",11.95,4.0,180,"TV console"],["TV 55″ · 123×8",11.95,4.15,180],
@@ -500,6 +504,13 @@ const $=id=>document.getElementById(id);
 const rad=a=>a*Math.PI/180;
 function corners(p,shrink){ const a=rad(p.r),c=Math.cos(a),s=Math.sin(a),hw=p.w/2-(shrink||0),hd=p.d/2-(shrink||0);
   return [[-hw,-hd],[hw,-hd],[hw,hd],[-hw,hd]].map(([u,v])=>[p.x+u*c-v*s,p.y+u*s+v*c]); }
+function lrects(p,s){ s=s||0; const w=p.w,d=p.d,bd=Math.min(p.bd||d*0.6,d),cw=Math.min(p.cw||w*0.35,w),xL=-w/2,xR=w/2,yT=-d/2,yB=d/2;
+  const ch=p.mir?[xL+s,yT+s,xL+cw-s,yB-s]:[xR-cw+s,yT+s,xR-s,yB-s]; return [[xL+s,yT+s,xR-s,yT+bd-s],ch]; }
+function polys(p,shrink){ if(p.s!=="lsofa") return [corners(p,shrink)]; const a=rad(p.r),c=Math.cos(a),sn=Math.sin(a);
+  return lrects(p,shrink).map(([x0,y0,x1,y1])=>[[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(([u,v])=>[p.x+u*c-v*sn,p.y+u*sn+v*c])); }
+const inPiece=(pt,p)=>polys(p).some(P=>inside(pt,P));
+function anyOverlap(A,B){ return A.some(a=>B.some(b=>overlap(a,b))); }
+function piecesDist(A,B){ let m=1e9; for(const a of A) for(const b of B) m=Math.min(m,polyDist(a,b)); return m; }
 function inside(pt,P){ let c=false; for(let i=0,j=P.length-1;i<P.length;j=i++){ const a=P[i],b=P[j]; if(((a[1]>pt[1])!==(b[1]>pt[1]))&&(pt[0]<(b[0]-a[0])*(pt[1]-a[1])/(b[1]-a[1])+a[0])) c=!c; } return c; }
 const mkOpenR = ()=>OPEN.map(o=>{ const tol=(o.tol||0.17)+0.02, hz=o.a[1]===o.b[1]; const x0=Math.min(o.a[0],o.b[0]),x1=Math.max(o.a[0],o.b[0]),y0=Math.min(o.a[1],o.b[1]),y1=Math.max(o.a[1],o.b[1]);
   return hz?[x0,o.a[1]-tol,x1,o.a[1]+tol]:[o.a[0]-tol,y0,o.a[0]+tol,y1]; });
@@ -518,22 +529,22 @@ function check(){
   flags={}; const W=[];
   const solid=S.pieces.filter(p=>!p.f);
   // walls and doors
-  S.pieces.forEach(p=>{ if(p.f==="wall"||p.f==="top"||p.f==="guide") return; const C=corners(p,0.015); let wall=false,door=false;
-    const pts=[[p.x,p.y]]; for(let i=0;i<4;i++){ const a=C[i],b=C[(i+1)%4],L=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.ceil(L/0.05)); for(let k=0;k<n;k++) pts.push([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n]); }
+  S.pieces.forEach(p=>{ if(p.f==="wall"||p.f==="top"||p.f==="guide") return; let wall=false,door=false;
+    const pts=[]; for(const C of polys(p,0.015)){ pts.push(C[0]); for(let i=0;i<4;i++){ const a=C[i],b=C[(i+1)%4],L=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.ceil(L/0.05)); for(let k=0;k<n;k++) pts.push([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n]); } }
     for(const q of pts){ if(!inRooms(q)){ if(inOpen(q)) door=true; else wall=true; } }
     if(wall){ W.push({id:p.id,t:"bad",m:`${p.n} runs into a wall`}); flags[p.id]="bad"; }
     else if(door){ W.push({id:p.id,t:"bad",m:`${p.n} blocks a doorway`}); flags[p.id]="bad"; } });
   // overlaps
   const all=[...solid,...fixedP];
-  for(let i=0;i<solid.length;i++){ const A=solid[i], CA=corners(A,0.01);
+  for(let i=0;i<solid.length;i++){ const A=solid[i], CA=polys(A,0.01);
     for(let j=i+1;j<all.length;j++){ const B=all[j]; if(B===A) continue;
       if((isChair(A)&&isTable(B))||(isChair(B)&&isTable(A))) continue;
-      if(overlap(CA,corners(B,0.01))){ W.push({id:A.id,t:"bad",m:`${A.n} overlaps ${B.n}`}); flags[A.id]="bad"; if(!B.fixed) flags[B.id]="bad"; } } }
+      if(anyOverlap(CA,polys(B,0.01))){ W.push({id:A.id,t:"bad",m:`${A.n} overlaps ${B.n}`}); flags[A.id]="bad"; if(!B.fixed) flags[B.id]="bad"; } } }
   // tight passages
   const roomOf=p=>ROOMS.findIndex(r=>inside([p.x,p.y],r.p));
   const big=S.pieces.filter(isBig).map(p=>Object.assign(Object.create(null),{p,rm:roomOf(p),lie:/sofa|bed|daybed/.test(p.s)}));
   for(let i=0;i<big.length;i++) for(let j=i+1;j<big.length;j++){ const A=big[i],B=big[j]; if(A.rm<0||A.rm!==B.rm||!(A.lie||B.lie)) continue;
-    big[i]=A.p; big[j]=B.p; const d=polyDist(corners(A.p),corners(B.p)); big[i]=A; big[j]=B;
+    big[i]=A.p; big[j]=B.p; const d=piecesDist(polys(A.p),polys(B.p)); big[i]=A; big[j]=B;
     if(d>0.04&&d<0.6){ W.push({id:A.p.id,t:"t",m:`${A.p.n} to ${B.p.n}: ${Math.round(d*100)} cm`}); if(!flags[A.p.id]) flags[A.p.id]="tight"; if(!flags[B.p.id]) flags[B.p.id]="tight"; } }
   const ul=$("warns");
   ul.innerHTML = W.length? W.map(w=>`<li class="${w.t==="t"?"t":""}" data-id="${w.id}">${w.m}</li>`).join("") : `<li class="ok">No clashes, and at least 60 cm beside every bed and sofa.</li>`;
@@ -548,6 +559,12 @@ function shape(p){ const w=p.w,d=p.d,x=-w/2,y=-d/2;
   switch(p.s){
     case "round": return `<circle r="${r3(w/2)}" class="pc"/>`;
     case "plant": return p.w>p.d*1.5||p.d>p.w*1.5 ? R(x,y,w,d,0.05,"pc")+R(x+0.05,y+0.05,w-0.1,d-0.1,0.05,"leaf") : `<circle r="${r3(w/2)}" class="pc"/><circle r="${r3(w*0.33)}" class="leaf"/>`;
+    case "lsofa": { const [b,ch]=lrects(p), m=p.mir, xL=x, xR=x+w, yT=y, yB=y+d, yb=b[3];
+      const pts=m?[[xL,yT],[xR,yT],[xR,yb],[ch[2],yb],[ch[2],yB],[xL,yB]]:[[xL,yT],[xR,yT],[xR,yB],[ch[0],yB],[ch[0],yb],[xL,yb]];
+      const out=`<path d="M${pts.map(q=>r3(q[0])+" "+r3(q[1])).join(" L")} Z" class="pc"/>`;
+      const endX=m?xR-0.12:xL, armX=m?xL:xR-0.12;
+      return out+R(xL,yT,w,0.2,0.05,"pc")+R(endX,yT,0.12,yb-yT,0.04,"pc")+R(armX,yT,0.12,d,0.04,"pc")
+        +`<line x1="${r3(ch[0])}" y1="${r3(yb)}" x2="${r3(ch[2])}" y2="${r3(yb)}" class="rug"/>`; }
     case "sofa": return R(x,y,w,d,0.06,"pc")+R(x,y,w,0.2,0.05,"pc")+R(x,y,0.12,d,0.04,"pc")+R(x+w-0.12,y,0.12,d,0.04,"pc");
     case "chair": { const b=p.small?Math.min(0.08,d*0.2):0.16; return R(x,y,w,d,p.small?0.05:0.1,"pc")+R(x,y,w,b,0.03,p.small?"dk":"pc"); }
     case "hm": return `<circle r="${r3(w/2)}" class="rug"/>`+R(x+0.12,y+0.12,w-0.24,d-0.24,0.1,"pc")+R(x+0.12,y+0.12,w-0.24,0.09,0,"dk");
@@ -628,6 +645,7 @@ function render(){
 const cur=()=>S.pieces.find(p=>p.id===sel);
 function renderInspector(){ const p=cur(); $("noSel").hidden=!!p; $("selForm").hidden=!p; $("selBar").hidden=!p||view!=="plan"; if(!p) return; $("selName").textContent=p.n;
   const act=document.activeElement;
+  $("mir").hidden=p.s!=="lsofa";
   if(act!==$("sName")) $("sName").value=p.n; if(act!==$("sW")) $("sW").value=Math.round(p.w*100); if(act!==$("sD")) $("sD").value=Math.round(p.d*100); if(act!==$("sH")) $("sH").value=Math.round(p.h*100);
   const sh=p.src==="Second-hand"; $("sContactL").hidden=!sh; $("sFbL").hidden=!sh;
   if(act!==$("sSrc")) $("sSrc").value=p.src||"IKEA"; if(act!==$("sPrice")) $("sPrice").value=p.price==null?"":p.price; if(act!==$("sUrl")) $("sUrl").value=p.url||""; if(act!==$("sContact")) $("sContact").value=p.contact||""; if(act!==$("sFb")) $("sFb").value=p.fb||"";
@@ -635,6 +653,7 @@ function renderInspector(){ const p=cur(); $("noSel").hidden=!!p; $("selForm").h
 function edit(fn){ const p=cur(); if(!p) return; pushUndo(); fn(p); render(); }
 $("sName").addEventListener("change",e=>edit(p=>p.n=e.target.value.trim()||p.base));
 [["sW","w"],["sD","d"],["sH","h"]].forEach(([id,k])=>$(id).addEventListener("change",e=>{ const v=parseFloat(e.target.value); if(v>0) edit(p=>p[k]=v/100); }));
+$("mir").onclick=()=>edit(p=>{ if(p.s==="lsofa") p.mir=p.mir?0:1; });
 [["rL90",-90],["rL15",-15],["rR15",15],["rR90",90]].forEach(([id,a])=>$(id).onclick=()=>edit(p=>p.r=((p.r+a)%360+360)%360));
 $("sSrc").addEventListener("change",e=>edit(p=>{ p.src=e.target.value; if(p.src==="Owner") p.price=0; }));
 $("sPrice").addEventListener("change",e=>{ const v=e.target.value.trim(); edit(p=>p.price=v===""?null:Math.max(0,Math.round(parseFloat(v)||0))); });
@@ -721,9 +740,9 @@ svg.addEventListener("pointermove",ev=>{
 });
 function endPtr(ev){ ptrs.delete(ev.pointerId); if(ptrs.size<2) pinch=null;
   if(drag){ if(moved){ undoStack.push(drag.start); if(undoStack.length>60) undoStack.shift(); $("undo").disabled=false; }
-    else if(drag.was){ const pt=[drag.P.x,drag.P.y]; const hits=S.pieces.filter(q=>inside(pt,corners(q))).sort((a,b)=>LAYER(b)-LAYER(a));
+    else if(drag.was){ const pt=[drag.P.x,drag.P.y]; const hits=S.pieces.filter(q=>inPiece(pt,q)).sort((a,b)=>LAYER(b)-LAYER(a));
       if(hits.length>1){ const i=hits.findIndex(q=>q.id===drag.p.id); sel=hits[(i+1)%hits.length].id; $("hint").textContent=`Selected ${cur().n}. Tap again to pick the next piece under your finger.`; } }
-    else { const pt=[drag.P.x,drag.P.y]; if(S.pieces.filter(q=>inside(pt,corners(q))).length>1) $("hint").textContent="Tap again to reach the piece underneath, for example a rug under a sofa."; }
+    else { const pt=[drag.P.x,drag.P.y]; if(S.pieces.filter(q=>inPiece(pt,q)).length>1) $("hint").textContent="Tap again to reach the piece underneath, for example a rug under a sofa."; }
     drag=null; render(); }
   if(pan){ if(!moved && Math.abs(ev.clientX-pan.x)+Math.abs(ev.clientY-pan.y)<4 && sel!==null){ sel=null; render(); } pan=null; } }
 svg.addEventListener("pointerup",endPtr); svg.addEventListener("pointercancel",endPtr);
@@ -932,6 +951,9 @@ function init3D(){
           if(p.s==="plant"){ add(new THREE.CylinderGeometry(w*0.3,w*0.25,0.4,16),M("pot"),0,0.2,0,g); const o=add(new THREE.IcosahedronGeometry(w*0.55,1),M("plant"),0,0.4+(h-0.4)/2,0,g); o.scale.y=(h-0.4)/(w*1.1); break; }
           if(/table/i.test(p.base||"")){ add(new THREE.CylinderGeometry(w/2,w/2,0.035,32),M(p.c),0,h-0.02,0,g); add(new THREE.CylinderGeometry(0.03,0.03,h,10),M("dark"),0,h/2,0,g); break; }
           add(new THREE.CylinderGeometry(w/2,w/2,h,24),M(p.c),0,h/2,0,g); break;
+        case "lsofa": { const bd=Math.min(p.bd||d*0.6,d), cw=Math.min(p.cw||w*0.35,w), sg=p.mir?-1:1, yT=-d/2;
+          box(0,yT+bd/2,w,bd,0.42,0.02,M(p.c)); box(sg*(w/2-cw/2),yT+bd+(d-bd)/2,cw,d-bd,0.42,0.02,M(p.c));
+          box(0,yT+0.1,w,0.2,h-0.42,0.44,M(p.c)); box(-sg*(w/2-0.06),yT+bd/2,0.12,bd,0.2,0.44,M(p.c)); box(sg*(w/2-0.06),0,0.12,d,0.2,0.44,M(p.c)); break; }
         case "sofa": box(0,0,w,d,0.42,0.02,M(p.c)); box(0,-d/2+0.1,w,0.2,h-0.42,0.44,M(p.c)); box(-w/2+0.06,0,0.12,d,0.2,0.44,M(p.c)); box(w/2-0.06,0,0.12,d,0.2,0.44,M(p.c)); break;
         case "chair": if(p.small){ box(0,0,w,d,0.05,0.42,M(p.c)); box(0,-d/2+0.025,w,0.05,0.42,0.47,M(p.c)); [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>box(a*(w/2-0.03),b*(d/2-0.03),0.03,0.03,0.42,0,M("dark"))); }
           else { box(0,0,w,d,0.42,0,M(p.c)); box(0,-d/2+0.08,w,0.16,h-0.42,0.42,M(p.c)); } break;
