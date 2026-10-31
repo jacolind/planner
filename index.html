@@ -292,6 +292,7 @@ select{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:
             <button class="btn danger" id="del">Delete</button>
           </div>
           <p class="note" id="selInfo"></p>
+          <p class="note" id="tvInfo" hidden></p>
         </div>
       </div>
       <div class="panel pad">
@@ -460,9 +461,10 @@ const LIB = [
   {k:"Coat stand",w:0.45,d:0.45,h:1.80,s:"round",c:"steel",small:1},
   {k:"Utility shelf for wet gear (like BROR)",w:0.85,d:0.40,h:1.90,s:"store",c:"steel"},
   {k:"Outdoor storage box",w:1.20,d:0.55,h:0.60,s:"store",c:"out2"},
-  {k:"TV bench",w:1.20,d:0.40,h:0.38,s:"rect",c:"oak"},
-  {k:"TV bench",w:1.80,d:0.40,h:0.38,s:"rect",c:"oak"}]},
+  {k:"BESTÅ €50-200",w:1.20,d:0.42,h:0.48,s:"store",c:"cab"}]},
  {cat:"Screens and sound", items:[
+  {k:"TV 43″",w:0.96,d:0.08,h:0.56,e:0.54,s:"dark",c:"dark",f:"top"},
+  {k:"TV 50″",w:1.11,d:0.08,h:0.64,e:0.54,s:"dark",c:"dark",f:"top"},
   {k:"TV 55″",w:1.23,d:0.08,h:0.71,e:0.95,s:"dark",c:"dark",f:"wall"},
   {k:"TV 65″",w:1.45,d:0.08,h:0.83,e:0.9,s:"dark",c:"dark",f:"wall"},
   {k:"Wide monitor",w:0.82,d:0.18,h:0.37,e:0.92,s:"dark",c:"dark",f:"top"},
@@ -472,8 +474,7 @@ const LIB = [
   {k:"Soundbar",w:0.90,d:0.10,h:0.07,e:0.5,s:"dark",c:"dark",f:"top"},
   {k:"Subwoofer",w:0.40,d:0.40,h:0.40,s:"dark",c:"dark",small:1},
   {k:"Speaker on stand",w:0.25,d:0.25,h:0.3,e:0.8,s:"dark",c:"dark",stand:1},
-  {k:"Wall speaker",w:0.22,d:0.2,h:0.3,e:1.8,s:"dark",c:"dark",f:"wall"},
-  {k:"TV and bookshelf unit, 105 high",w:2.28,d:0.35,h:1.05,s:"tvunit",c:"oak"}]},
+  {k:"Wall speaker",w:0.22,d:0.2,h:0.3,e:1.8,s:"dark",c:"dark",f:"wall"}]},
  {cat:"Rugs, plants and gear", items:[
   {k:"Mirror, round, on the wall",w:0.80,d:0.03,h:0.80,e:1.15,s:"rect",c:"steel",f:"wall"},
   {k:"Mirror, tall, on the wall",w:0.65,d:0.03,h:1.50,e:0.45,s:"rect",c:"steel",f:"wall"},
@@ -503,26 +504,13 @@ const BYNAME = {}; LIB.forEach(g=>g.items.forEach(it=>BYNAME[it.n]=it));
 const STARTER_5A = [
  ["Kiteboard · 145×43",3.31,9.3,90],["Kiteboard · 145×43",3.8,9.3,90],["Kite backpack · 65×40",4.25,8.75,90],["Kite backpack · 65×40",4.25,9.4,90],["Beach bag with kite gear · 70×40",4.25,10.15,90]
 ];
-const OLD_STARTER_5A = [
- ["Sofa, 3 seats · 228×95",11.42,5.71,90],["Coffee table · 75×75",10.22,6.0,0],["Rug · 240×170",10.25,5.9,0],
- ["TV and bookshelf unit, 105 high · 228×35",8.75,6.49,270],["DJ controller · 48×27",8.75,6.49,270],["Laptop · 32×23",8.75,5.95,270],
- ["Speaker on stand · 25×25",10.75,4.72,90],["Speaker on stand · 25×25",10.75,6.72,90],
- ["Round dining table · 110×110",6.38,6.51,0],["Dining chair · 45×52",6.38,5.71,0],["Dining chair · 45×52",6.38,7.31,180],["Dining chair · 45×52",5.6,6.51,270],["Dining chair · 45×52",7.16,6.51,90],
- ["Bench · 120×35",7.1,4.73,0],["Floor lamp · 35×35",8.35,7.75,0],["Plant · 45×45",5.55,7.68,0],
- ["Sit-stand desk · 140×80",11.48,9.17,90],["Tall monitor · 35×18",11.19,8.72,270],["Wide monitor · 82×18",11.19,9.32,270],["Desk chair · 70×70",12.25,9.17,90],
- ["Shelf · 77×39",13.7,6.8,0],
- ["Bed 140×200 · 156×209",12.745,1.33,270],["Bedside table · 40×40",12.75,2.33,0],["Wardrobe · 100×58",14.9,0.85,0],
- ["Bed 180×200 · 196×209",15.05,4.35,0],["Bench · 120×35",15.05,5.6,0],["Bedside table · 40×40",13.85,3.5,0],["Bedside table · 40×40",16.25,3.5,0],
- ["Outdoor sofa · 210×80",2.0,4.9,0],["Coffee table · 90×55",2.0,5.85,0],["Yoga mat · 200×80",3.6,6.9,90],
- ["Kiteboard · 145×43",3.31,9.325,90],["Kite backpack · 65×40",3.75,9.225,90],["Kite backpack · 65×40",4.1,9.225,90]
-];
 let uid=1;
 function mk(name,x,y,r,label,extra){ const b=BYNAME[name]; return Object.assign({id:uid++,n:label||name,base:name,x,y,r:r||0,w:b.w,d:b.d,h:b.h,e:b.e||0,s:b.s,c:b.c,f:b.f||"",stand:b.stand||0,small:b.small||0,bd:b.bd||0,cw:b.cw||0,mir:0,src:b.own?"Owner":"IKEA",price:b.own?0:null,url:"",contact:"",fb:""},extra||{}); }
 const STARTER_3B = [
  ["Sofa, 2 seats · 180×88",11.85,0.958,0],["Rug · 195×133",11.85,2.0,0],["Coffee table · 90×55",11.85,2.0,0],
- ["TV bench · 120×40",11.95,4.0,180,"TV console"],["TV 55″ · 123×8",11.95,4.15,180],
+ ["BESTÅ €50-200 · 120×42",11.95,4.0,180],["TV 50″ · 111×8",11.95,4.1,180],
  ["Sit-stand desk · 160×80",14.2,0.91,0],["Tall monitor · 35×18",13.65,0.62,0],["Wide monitor · 82×18",14.3,0.62,0],["Speaker on furniture · 17×22",13.49,0.62,0],["Speaker on furniture · 17×22",14.91,0.62,0],
- ["DJ controller · 48×27",14.85,1.0,90],["Laptop · 32×23",13.75,0.95,0],["Desk chair · 70×70",14.2,1.7,180],
+ ["DJ controller (FLX4) · 48×27",14.85,1.0,90],["Laptop (MacBook Pro 14) · 31×22",13.75,0.95,0],["Desk chair · 70×70",14.2,1.7,180],
  ["Dining table · 140×80",7.9,1.9,0],["Dining chair · 45×52",7.55,1.2,0],["Dining chair · 45×52",8.25,1.2,0],["Dining chair · 45×52",7.55,2.6,180],["Dining chair · 45×52",8.25,2.6,180],
  ["Bed 180×200 · 196×209",12.0,7.53,0],["Bench · 120×35",12.0,8.75,0,null,{w:1.4,d:0.3}],["Bedside table · 40×40",13.15,6.7,0],["Wardrobe · 100×58",14.0,6.77,0],
  ["Round dining table · 90×90",16.54,1.6,0],["Dining chair · 45×52",16.54,0.95,0],["Dining chair · 45×52",16.54,2.25,180],["Armchair · 79×82",16.54,5.0,0],["Plant · 45×45",16.54,7.6,0],
@@ -758,10 +746,39 @@ function render(){
   let m=""; if(meas.length){ const a=meas[0],b=meas[1]||a; m=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" class="meas"/><circle cx="${a[0]}" cy="${a[1]}" r="0.05" fill="var(--sun)"/>`;
     if(meas[1]){ const d=Math.hypot(b[0]-a[0],b[1]-a[1]); m+=`<circle cx="${b[0]}" cy="${b[1]}" r="0.05" fill="var(--sun)"/><text class="meast" x="${(a[0]+b[0])/2}" y="${(a[1]+b[1])/2-0.1}" font-size="0.18" text-anchor="middle" paint-order="stroke" stroke="var(--panel)" stroke-width="0.06">${Math.round(d*100)} cm</text>`; } }
   if(gStart) m+=`<circle cx="${gStart[0]}" cy="${gStart[1]}" r="0.06" fill="var(--accent)"/>`;
-  m+=traceSVG();
+  m+=traceSVG(); m+=tvSVG();
   svg.innerHTML = `<g id="rotg"${portrait?' transform="rotate(90)"':""}>` + STATIC + `<g id="pcs">${ps.map(pieceSVG).join("")}</g><g>${ps.map(labelSVG).join("")}</g>` + uprightText(m) + `</g>`;
   setVB(); renderInspector(); renderBrief(); persist(); if(view==="3d"&&T) T.buildFurniture();
 }
+
+/* ---------- TV ergonomics ----------
+   Comfortable distance = the screen fills 40° (THX, close end) to 30° (SMPTE, far end) of your view.
+   distance = screen width / (2 × tan(angle/2)) → 1.374 × width at 40°, 1.866 × width at 30°.
+   Eyes are taken 35 cm in front of the back edge of the nearest sofa or armchair. */
+const isTV=p=>/^TV \d/.test(p.base||p.k||"");
+const isSeat=p=>/^(sofa|lsofa|daybed)$/.test(p.s)||/Armchair|^Sofa/.test(p.base||"");
+const tvRange=w=>[Math.round(w*137.4),Math.round(w*186.6)];
+const EYE_H=1.05;
+function toWorld(p,lx,ly){ const a=rad(p.r),c=Math.cos(a),s=Math.sin(a); return [p.x+lx*c-ly*s, p.y+lx*s+ly*c]; }
+function tvView(tv){ const A=toWorld(tv,-tv.w/2,0), B=toWorld(tv,tv.w/2,0); let best=null;
+  S.pieces.filter(isSeat).forEach(st=>{ const eye=toWorld(st,0,-st.d/2+Math.min(0.35,st.d/2));
+    const dx=B[0]-A[0],dy=B[1]-A[1],L=dx*dx+dy*dy, t=Math.max(0,Math.min(1,((eye[0]-A[0])*dx+(eye[1]-A[1])*dy)/L)), q=[A[0]+t*dx,A[1]+t*dy], d=Math.hypot(eye[0]-q[0],eye[1]-q[1]);
+    if(!best||d<best.d) best={seat:st,eye,q,d}; });
+  return best; }
+function tvPair(){ const p=cur(); if(!p) return null; if(isTV(p)){ const v=tvView(p); return v?Object.assign(v,{tv:p}):null; }
+  if(isSeat(p)){ let best=null; S.pieces.filter(isTV).forEach(t=>{ const v=tvView(t); if(v&&v.seat===p&&(!best||v.d<best.d)) best=Object.assign(v,{tv:t}); }); return best; } return null; }
+function tvVerdict(v){ const [lo,hi]=tvRange(v.tv.w), d=Math.round(v.d*100); return {d,lo,hi,t:d<lo?"too close":d>hi?"too far":"good"}; }
+function tvText(){ const p=cur(); if(!p) return ""; const v=tvPair();
+  if(isTV(p)){ const [lo,hi]=tvRange(p.w), c=Math.round((p.e+p.h/2)*100);
+    let t=`Ergonomic viewing distance for this TV: ${lo} to ${hi} cm (screen fills 40° to 30° of your view). Screen centre ${c} cm high, seated eyes about ${Math.round(EYE_H*100)} cm.`;
+    if(v){ const r=tvVerdict(v); t+=` From ${v.seat.n} it is ${r.d} cm: ${r.t==="good"?"inside the range":r.t+(r.t==="too far"?", a bigger TV or a closer seat would suit":", sit further back or pick a smaller TV")}.`; }
+    else t+=" Add a sofa or armchair to see the distance from your seat.";
+    return t; }
+  if(v){ const r=tvVerdict(v); return `${v.tv.n} is ${r.d} cm from your eyes here. Ergonomic range for it: ${r.lo} to ${r.hi} cm, so ${r.t==="good"?"this is inside the range":"this is "+r.t}.`; }
+  return ""; }
+function tvSVG(){ const v=tvPair(); if(!v) return ""; const r=tvVerdict(v), col=r.t==="good"?"var(--accent)":"var(--sun)", a=v.q, b=v.eye;
+  return `<line x1="${r3(a[0])}" y1="${r3(a[1])}" x2="${r3(b[0])}" y2="${r3(b[1])}" stroke="${col}" stroke-width="0.03" stroke-dasharray="0.08 0.06"/><circle cx="${r3(b[0])}" cy="${r3(b[1])}" r="0.05" fill="${col}"/>`
+   +`<text class="meast" x="${r3((a[0]+b[0])/2)}" y="${r3((a[1]+b[1])/2-0.1)}" font-size="0.17" text-anchor="middle" paint-order="stroke" stroke="var(--panel)" stroke-width="0.06" style="fill:${col}">${r.d} cm · ${r.t} (${r.lo}–${r.hi})</text>`; }
 
 /* ---------- inspector ---------- */
 const cur=()=>S.pieces.find(p=>p.id===sel);
@@ -771,7 +788,8 @@ function renderInspector(){ const p=cur(); $("noSel").hidden=!!p; $("selForm").h
   if(act!==$("sName")) $("sName").value=p.n; if(act!==$("sW")) $("sW").value=Math.round(p.w*100); if(act!==$("sD")) $("sD").value=Math.round(p.d*100); if(act!==$("sH")) $("sH").value=Math.round(p.h*100);
   const sh=p.src==="Second-hand"; $("sContactL").hidden=!sh; $("sFbL").hidden=!sh;
   if(act!==$("sSrc")) $("sSrc").value=p.src||"IKEA"; if(act!==$("sPrice")) $("sPrice").value=p.price==null?"":p.price; if(act!==$("sUrl")) $("sUrl").value=p.url||""; if(act!==$("sContact")) $("sContact").value=p.contact||""; if(act!==$("sFb")) $("sFb").value=p.fb||"";
-  $("selInfo").textContent=`${cmR(p.w)} wide × ${cmR(p.d)} deep × ${cmR(p.h)} high cm · centre ${p.x.toFixed(2)}, ${p.y.toFixed(2)} m · rotated ${((p.r%360)+360)%360}°`+(p.f==="wall"?" · wall-mounted, ignored by the clash check":p.f==="top"?" · sits on a desk, ignored by the clash check":p.f==="floor"?" · on the floor, others can stand on it":""); }
+  $("selInfo").textContent=`${cmR(p.w)} wide × ${cmR(p.d)} deep × ${cmR(p.h)} high cm · centre ${p.x.toFixed(2)}, ${p.y.toFixed(2)} m · rotated ${((p.r%360)+360)%360}°`+(p.f==="wall"?" · wall-mounted, ignored by the clash check":p.f==="top"?" · sits on furniture, ignored by the clash check":p.f==="floor"?" · on the floor, others can stand on it":"");
+  const tvt=tvText(); $("tvInfo").hidden=!tvt; $("tvInfo").textContent=tvt; }
 function edit(fn){ const p=cur(); if(!p) return; pushUndo(); fn(p); render(); }
 $("sName").addEventListener("change",e=>edit(p=>p.n=e.target.value.trim()||p.base));
 [["sW","w"],["sD","d"],["sH","h"]].forEach(([id,k])=>$(id).addEventListener("change",e=>{ const v=parseFloat(e.target.value); if(v>0) edit(p=>p[k]=v/100); }));
@@ -797,7 +815,7 @@ const CATS=[
  {k:"chair",t:"Chairs",m:it=>/chair|Stool/i.test(it.k)&&!/Armchair/.test(it.k)},
  {k:"table",t:"Tables",m:it=>/table/i.test(it.k)&&!/Standing table/.test(it.k)},
  {k:"desk",t:"Desks",m:it=>/desk|Standing table/i.test(it.k)&&!/chair/i.test(it.k)},
- {k:"store",t:"Storage",m:it=>it.s==="store"||/TV bench|TV and bookshelf|Wall cabinet|Coat stand/.test(it.k)},
+ {k:"store",t:"Storage",m:it=>it.s==="store"||/^BESTÅ €|Wall cabinet|Coat stand/.test(it.k)},
  {k:"screen",t:"Screens and sound",m:it=>!it.own&&/^TV \d|Speaker|speaker|monitor|Soundbar|Subwoofer/.test(it.k)},
  {k:"deco",t:"Rugs, plants, lamps, mirrors",m:it=>/Rug|Yoga|cushion|Plant|lamp|Mirror/i.test(it.k)},
  {k:"own",t:"Owner's things",m:it=>!!it.own},
@@ -814,7 +832,7 @@ function renderPicker(){ const g=$("pGrid"), c=CATS.find(x=>x.k===pCat);
   if(!c){ g.innerHTML=CATS.map(x=>`<button class="pk" data-cat="${x.k}">${icon(x.items[0])}<span class="tx"><span>${esc(x.t)}</span><small>${x.items.length?x.items.length+" pieces":"any size"}</small></span></button>`).join("");
     $("pNote").textContent="Tap a category, then a piece. It lands in the middle of the plan, ready to drag. Sizes are width × depth × height in cm, typical IKEA outer dimensions."; return; }
   if(c.k==="custom"){ $("pNote").textContent="For a second-hand find or anything not in the lists. Add its price, link and an IKEA fallback under Selected."; return; }
-  g.innerHTML=c.items.map(it=>`<button class="pk" data-n="${esc(it.n)}">${icon(it)}<span class="tx"><span>${esc(it.k)}</span><small>${Math.round(it.w*100)} × ${Math.round(it.d*100)} × ${Math.round(it.h*100)} cm</small></span></button>`).join("");
+  g.innerHTML=c.items.map(it=>`<button class="pk" data-n="${esc(it.n)}">${icon(it)}<span class="tx"><span>${esc(it.k)}</span><small>${Math.round(it.w*100)} × ${Math.round(it.d*100)} × ${Math.round(it.h*100)} cm${/^TV \d/.test(it.k)?` · sit ${tvRange(it.w).join("–")} cm away`:""}</small></span></button>`).join("");
   $("pNote").textContent=c.k==="own"?"These are already in the flat's future. They cost nothing.":"Tap as many as you need. Each one lands in the middle of the plan."; }
 let dropN=0;
 function dropPoint(){ let c=toPlanXY(vb.x+vb.w/2, vb.y+vb.h/2);
