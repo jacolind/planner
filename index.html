@@ -404,6 +404,7 @@ const LIB = [
   {k:"Sofa, 3 seats",w:2.18,d:0.88,h:0.78,s:"sofa",c:"sofa"},
   {k:"Sofa, 3 seats",w:1.98,d:0.99,h:0.83,s:"sofa",c:"sofa"},
   {k:"Sofa, 2 seats",w:1.80,d:0.88,h:0.80,s:"sofa",c:"sofa"},
+  {k:"LANDSKRONA 2-seat sofa",w:1.64,d:0.89,h:0.78,s:"sofa",c:"sofa"},
   {k:"Sofa, L-shaped",w:2.80,d:1.63,h:0.83,s:"lsofa",c:"sofa",bd:0.95,cw:1.00},
   {k:"Sofa, L-shaped",w:2.66,d:1.64,h:0.83,s:"lsofa",c:"sofa",bd:0.98,cw:1.00},
   {k:"Sofa, L-shaped sofa-bed",w:2.30,d:1.51,h:0.86,s:"lsofa",c:"sofa",bd:0.88,cw:0.88},
@@ -756,7 +757,7 @@ function render(){
    distance = screen width / (2 × tan(angle/2)) → 1.374 × width at 40°, 1.866 × width at 30°.
    Eyes are taken 35 cm in front of the back edge of the nearest sofa or armchair. */
 const isTV=p=>/^TV \d/.test(p.base||p.k||"");
-const isSeat=p=>/^(sofa|lsofa|daybed)$/.test(p.s)||/Armchair|^Sofa/.test(p.base||"");
+const isSeat=p=>/^(sofa|lsofa|daybed)$/.test(p.s)||/Armchair|^Sofa|LANDSKRONA/.test(p.base||"");
 const tvRange=w=>[Math.round(w*137.4),Math.round(w*186.6)];
 const EYE_H=1.05;
 function toWorld(p,lx,ly){ const a=rad(p.r),c=Math.cos(a),s=Math.sin(a); return [p.x+lx*c-ly*s, p.y+lx*s+ly*c]; }
@@ -811,7 +812,7 @@ function addPiece(p){ pushUndo(); S.pieces.push(p); sel=p.id; if(view==="3d") se
 const ALL=[]; LIB.forEach(g=>g.items.forEach(it=>ALL.push(it)));
 const CATS=[
  {k:"bed",t:"Beds",m:it=>/^Bed |Bedside|^Bench|Sofa-bed/.test(it.k)},
- {k:"sofa",t:"Sofas",m:it=>/^Sofa,|Armchair|Outdoor sofa/.test(it.k)},
+ {k:"sofa",t:"Sofas",m:it=>/^Sofa,|^LANDSKRONA|Armchair|Outdoor sofa/.test(it.k)},
  {k:"chair",t:"Chairs",m:it=>/chair|Stool/i.test(it.k)&&!/Armchair/.test(it.k)},
  {k:"table",t:"Tables",m:it=>/table/i.test(it.k)&&!/Standing table/.test(it.k)},
  {k:"desk",t:"Desks",m:it=>/desk|Standing table/i.test(it.k)&&!/chair/i.test(it.k)},
