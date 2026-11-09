@@ -89,7 +89,7 @@ input[type=number]{width:76px;font:inherit;font-size:16px;padding:8px;border:1px
   <div><span class="chip">From photos</span>Open galley kitchen behind a bar about 2.7 m long and about 92 cm high (same level as the worktop). A full-height pier sits between the kitchen doorway and the bar, sticking out about 10 cm. A second pier stands at the window end. The entrance is an open recess with the front door, bedroom door and AC unit.</div>
   <div><span class="chip">Living room</span>7.20 × 3.55 m, plus the 0.55 m strip to the WC and kitchen doorways and the 1.30 × 1.65 m entrance recess. Allow about ±10 cm.</div>
   <div><span class="chip">Assumed</span>2.60 m ceiling height. Bar depth (55 cm) and pier sizes are read from the photos, so ±10 cm. The sliding door is 2.40 m. The kitchen has its own glazed door to the balcony.</div>
-  <div><span class="chip">Colours</span><span class="ok">green</span> fits, <span class="warn">amber</span> blocks a doorway, the bar front, the chair space or the unfolded bed, <span class="bad">red</span> hits a wall, the bar or another item.</div>
+  <div><span class="chip">Colours</span><span class="ok">green</span> fits, <span class="warn">amber</span> blocks a doorway, the bar front or the chair space, <span class="bad">red</span> hits a wall, the bar or another item.</div>
 </div>
 </main>
 
@@ -132,7 +132,7 @@ const ZONES=[
 ];
 const DEF=[
   {id:'tv',name:'TV bench + 55" TV',w:160,d:40,rot:270,cx:20,cy:255,on:true},
-  {id:'couch',name:'Sofa bed',w:200,d:100,rot:90,cx:350,cy:255,on:true},
+  {id:'couch',name:'SÖDERHAMN',w:198,d:99,rot:90,cx:350,cy:255.5,on:true},
   {id:'kallax',name:'KALLAX',w:147,d:39,rot:90,cx:419.5,cy:253.5,on:true},
   {id:'desk',name:'Desk',w:140,d:80,rot:90,cx:600,cy:270,on:true}
 ];
@@ -159,8 +159,8 @@ const WALLS=wallRects();
 
 let items=load()||clone(DEF),sel=null,drag=null,lastTap={id:null,t:0};
 function clone(o){return JSON.parse(JSON.stringify(o))}
-function load(){try{const s=localStorage.getItem('t1plan_v3');if(!s)return null;const v=JSON.parse(s);return Array.isArray(v)&&v.length===DEF.length?v:null}catch(e){return null}}
-function save(){try{localStorage.setItem('t1plan_v3',JSON.stringify(items))}catch(e){}}
+function load(){try{const s=localStorage.getItem('t1plan_v4');if(!s)return null;const v=JSON.parse(s);return Array.isArray(v)&&v.length===DEF.length?v:null}catch(e){return null}}
+function save(){try{localStorage.setItem('t1plan_v4',JSON.stringify(items))}catch(e){}}
 function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
 function txt(x,y,s,size,fill,p,anchor){const t=el('text',{x,y,'font-size':size||18,fill:fill||'#6b6a66','text-anchor':anchor||'middle','dominant-baseline':'central','font-family':'-apple-system,Helvetica,Arial,sans-serif'},p);t.textContent=s;return t}
 function R(r,a,p){return el('rect',Object.assign({x:r[0],y:r[1],width:r[2],height:r[3]},a),p)}
@@ -210,7 +210,7 @@ function drawBase(){
 
 function fp(it){const sw=it.rot%180!==0;const fw=sw?it.d:it.w,fh=sw?it.w:it.d;return{x:it.cx-fw/2,y:it.cy-fh/2,w:fw,h:fh}}
 function localToWorld(it,lx,ly,lw,lh){const a=it.rot*Math.PI/180;const pts=[[lx,ly],[lx+lw,ly],[lx,ly+lh],[lx+lw,ly+lh]].map(([x,y])=>[Math.round(x*Math.cos(a)-y*Math.sin(a))+it.cx,Math.round(x*Math.sin(a)+y*Math.cos(a))+it.cy]);const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);return{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
-const CLEAR={desk:{n:'chair space',d:()=>70},couch:{n:'unfolded bed',d:it=>Math.max(0,142-it.d)}};
+const CLEAR={desk:{n:'chair space',d:()=>70}};
 function clearZone(it){const c=CLEAR[it.id];if(!c)return null;const dd=c.d(it);return dd>0?{r:localToWorld(it,-it.w/2,it.d/2,it.w,dd),n:c.n}:null}
 function ov(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
 function inLiving(r){for(let y=r.y+2.5;y<r.y+r.h;y+=5)for(let x=r.x+2.5;x<r.x+r.w;x+=5)if(cell(x,y)!==1)return false;return true}
@@ -242,7 +242,7 @@ function drawItem(it,g){
     el('rect',{x:-w/2,y:-d/2,width:w,height:d,rx:3,fill:c.f,stroke:c.s,'stroke-width':sw},t);
     el('rect',{x:-30,y:-d/2+6,width:60,height:6,rx:2,fill:c.s,opacity:.6},t);
   }else if(it.id==='couch'){
-    const ud=Math.max(0,142-d);if(ud)el('rect',{x:-w/2,y:d/2,width:w,height:ud,rx:6,fill:'none',stroke:c.s,'stroke-width':1.2,'stroke-dasharray':'6 5',opacity:.8},t);
+    const ud=0;if(ud)el('rect',{x:-w/2,y:d/2,width:w,height:ud,rx:6,fill:'none',stroke:c.s,'stroke-width':1.2,'stroke-dasharray':'6 5',opacity:.8},t);
     el('rect',{x:-w/2,y:-d/2,width:w,height:d,rx:10,fill:c.f,stroke:c.s,'stroke-width':sw},t);
     el('rect',{x:-w/2+4,y:-d/2+4,width:w-8,height:Math.min(20,d*.25),rx:6,fill:c.s,opacity:.25},t);
     const a=Math.min(16,w*.08);
@@ -276,7 +276,7 @@ function panel(){
   $('rot').disabled=!it;$('w').disabled=!it;$('d').disabled=!it;
   if(!it){$('selName').textContent='Tap an item to select it';$('w').value='';$('d').value='';
     const bad=items.filter(i=>i.on).map(i=>({i,s:status(i)})).filter(a=>a.s.lvl>0);
-    $('read').innerHTML=bad.length?bad.map(a=>`<span class="${a.s.lvl>1?'bad':'warn'}">${a.i.name}: ${a.s.issues.join(', ')}</span>`).join('<br>'):'<span class="ok">Everything fits. No doorways, bar front or chair space blocked.</span><br>Dashed outlines: 70 cm chair space at the desk, and the sofa bed unfolded (142 cm deep).';return}
+    $('read').innerHTML=bad.length?bad.map(a=>`<span class="${a.s.lvl>1?'bad':'warn'}">${a.i.name}: ${a.s.issues.join(', ')}</span>`).join('<br>'):'<span class="ok">Everything fits. No doorways, bar front or chair space blocked.</span><br>Dashed outline: 70 cm chair space at the desk, which moves with the desk.';return}
   $('selName').textContent=it.name;
   if(document.activeElement!==$('w'))$('w').value=it.w;
   if(document.activeElement!==$('d'))$('d').value=it.d;
