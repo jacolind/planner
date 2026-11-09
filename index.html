@@ -475,6 +475,7 @@ const LIB = [
   {k:"TV 55″",w:1.23,d:0.08,h:0.71,e:0.95,s:"dark",c:"dark",f:"wall"},
   {k:"TV 65″",w:1.45,d:0.08,h:0.83,e:0.9,s:"dark",c:"dark",f:"wall"},
   {k:"TV 75″",w:1.67,d:0.06,h:0.96,e:0.6,s:"dark",c:"dark",f:"wall"},
+  {k:"TV bench + 75″ TV",w:1.80,d:0.42,h:0.48,s:"tvb",c:"cab"},
   {k:"Wide monitor",w:0.82,d:0.18,h:0.37,e:0.92,s:"dark",c:"dark",f:"top"},
   {k:"Tall monitor",w:0.35,d:0.18,h:0.61,e:0.9,s:"dark",c:"dark",f:"top"},
   {k:"Speaker on furniture",w:0.17,d:0.22,h:0.3,e:0.4,s:"dark",c:"dark",f:"top"},
@@ -518,8 +519,8 @@ const STARTER_5A = [
  ["Kiteboard · 145×43",3.31,9.3,90],["Kiteboard · 145×43",3.8,9.3,90],["Kite backpack · 65×40",4.25,8.75,90],["Kite backpack · 65×40",4.25,9.4,90],["Beach bag with kite gear · 70×40",4.25,10.15,90]
 ];
 const OWNED = { // the furniture Jacob owns or is about to buy: part of a fresh start (first visit, or Start over), never pushed into a saved layout
- "5A":[["SÖDERHAMN 3-seat (yours) · 198×99",8.2,6.3,270],["TV 75″ · 167×6",11.92,6.3,90],["Subwoofer · 40×40",11.73,7.55,90],["KALLAX 4×3, 4 cubes on the floor (yours) · 147×39",7.5,6.3,90],["Desk + chair (yours) · 140×150",11.88,9.15,270],["Bed 180×200 (yours) · 196×209",14.7,5.345,180],["KALLAX 2×2 (yours) · 77×39",16.25,3.515,0]],
- "T1B":[["SÖDERHAMN 3-seat (yours) · 198×99",8.11,4.95,90],["TV 75″ · 167×6",4.69,4.95,270],["Subwoofer · 40×40",4.82,3.83,270],["KALLAX 4×3, 4 cubes on the floor (yours) · 147×39",8.8,4.95,270],["Desk + chair (yours) · 140×150",10.26,5.3,90],["Bed 180×200 (yours) · 196×209",2.0,5.1,180],["KALLAX 2×2 (yours) · 77×39",0.35,3.25,270]]
+ "5A":[["SÖDERHAMN 3-seat (yours) · 198×99",8.2,6.3,270],["TV bench + 75″ TV · 180×42",11.74,6.3,90],["Subwoofer · 40×40",11.73,7.55,90],["KALLAX 4×3, 4 cubes on the floor (yours) · 147×39",7.5,6.3,90],["Desk + chair (yours) · 140×150",11.88,9.15,270],["Bed 180×200 (yours) · 196×209",14.7,5.345,180],["KALLAX 2×2 (yours) · 77×39",16.25,3.515,0]],
+ "T1B":[["SÖDERHAMN 3-seat (yours) · 198×99",8.11,4.95,90],["TV bench + 75″ TV · 180×42",4.82,4.95,270],["Subwoofer · 40×40",4.82,3.83,270],["KALLAX 4×3, 4 cubes on the floor (yours) · 147×39",8.8,4.95,270],["Desk + chair (yours) · 140×150",10.26,5.3,90],["Bed 180×200 (yours) · 196×209",2.0,5.1,180],["KALLAX 2×2 (yours) · 77×39",0.35,3.25,270]]
 };
 function ownedPieces(k){ return (OWNED[k]||[]).filter(a=>BYNAME[a[0]]).map(a=>mk(a[0],a[1],a[2],a[3])); }
 let uid=1;
@@ -576,7 +577,7 @@ const ROOMS_T1B = [{"k": "t1b_sala", "n": "Living + entrance", "a": "29.7 m²", 
 const OPEN_T1B = [{"t": "door", "a": [3.41, 1.975], "b": [4.26, 1.975], "o": 1}, {"t": "door", "a": [5.41, 1.975], "b": [4.71, 1.975], "o": -1}, {"t": "gap", "a": [7.66, 1.975], "b": [8.36, 1.975]}, {"t": "door", "a": [3.51, 3.775], "b": [4.31, 3.775], "o": 1}, {"t": "slide", "a": [11.96, 3.6], "b": [11.96, 6.0]}, {"t": "door", "a": [11.96, 0.9], "b": [11.96, 1.8], "o": 1}, {"t": "glass", "a": [0.06, 4.1], "b": [0.06, 5.9]}];
 const FIXED_T1B = [{"n": "Bar, ~92 cm", "x": 10.06, "y": 2.325, "w": 2.7, "d": 0.55, "h": 0.92, "s": "rect"}, {"n": "Kitchen run", "x": 10.41, "y": 0.6, "w": 2.8, "d": 0.6, "h": 0.9, "s": "rect"}, {"n": "Kitchen wall units", "x": 10.41, "y": 0.475, "w": 2.8, "d": 0.35, "h": 0.8, "s": "rect", "e": 1.5, "nc": 1}, {"n": "Tall unit, oven", "x": 8.685, "y": 0.6, "w": 0.65, "d": 0.6, "h": 2.15, "s": "rect"}, {"n": "Wardrobes", "x": 1.65, "y": 2.35, "w": 2.8, "d": 0.6, "h": 2.4, "s": "rect"}, {"n": "Basin", "x": 5.36, "y": 0.39, "w": 1.1, "d": 0.48, "h": 0.85, "s": "rect"}, {"n": "WC", "x": 7.31, "y": 1.35, "w": 0.4, "d": 0.6, "h": 0.42, "s": "rect"}, {"n": "Shower", "x": 6.96, "y": 0.6, "w": 1.1, "d": 0.9, "h": 0.02, "s": "shower"}, {"n": "AC", "x": 3.41, "y": 3.1, "w": 0.2, "d": 0.8, "h": 0.3, "s": "rect", "e": 2.15, "nc": 1}];
 const WALLFILL_T1B = [[[4.31, -0.05], [7.81, -0.05], [7.81, 0.0], [4.31, 0.0]], [[4.31, 0.0], [12.11, 0.0], [12.11, 0.15], [4.31, 0.15]], [[7.51, 0.15], [12.11, 0.15], [12.11, 0.3], [7.51, 0.3]], [[11.81, 0.3], [12.11, 0.3], [12.11, 0.9], [11.81, 0.9]], [[4.31, 0.15], [4.61, 0.15], [4.61, 1.6], [4.31, 1.6]], [[3.11, 1.6], [4.61, 1.6], [4.61, 1.75], [3.11, 1.75]], [[7.51, 0.3], [7.66, 0.3], [7.66, 1.9], [7.51, 1.9]], [[-0.09, 1.75], [4.61, 1.75], [4.61, 1.9], [-0.09, 1.9]], [[11.81, 1.8], [12.11, 1.8], [12.11, 2.05], [11.81, 2.05]], [[-0.09, 1.9], [3.41, 1.9], [3.41, 2.05], [-0.09, 2.05]], [[4.26, 1.9], [4.71, 1.9], [4.71, 2.05], [4.26, 2.05]], [[5.41, 1.9], [7.66, 1.9], [7.66, 2.05], [5.41, 2.05]], [[-0.09, 2.05], [0.21, 2.05], [0.21, 2.35], [-0.09, 2.35]], [[11.41, 2.05], [12.11, 2.05], [12.11, 2.35], [11.41, 2.35]], [[11.41, 2.35], [11.81, 2.35], [11.81, 2.4], [11.41, 2.4]], [[3.06, 2.05], [3.31, 2.05], [3.31, 2.65], [3.06, 2.65]], [[-0.19, 2.35], [0.21, 2.35], [0.21, 2.65], [-0.19, 2.65]], [[8.36, 2.05], [8.71, 2.05], [8.71, 2.7], [8.36, 2.7]], [[11.41, 2.4], [12.11, 2.4], [12.11, 2.7], [11.41, 2.7]], [[11.81, 2.7], [12.11, 2.7], [12.11, 3.6], [11.81, 3.6]], [[3.16, 2.65], [3.31, 2.65], [3.31, 3.7], [3.16, 3.7]], [[3.16, 3.7], [3.51, 3.7], [3.51, 3.85], [3.16, 3.85]], [[4.31, 3.7], [4.61, 3.7], [4.61, 3.85], [4.31, 3.85]], [[-0.19, 2.65], [0.11, 2.65], [0.11, 4.1], [-0.19, 4.1]], [[4.46, 3.85], [4.61, 3.85], [4.61, 6.15], [4.46, 6.15]], [[-0.19, 5.9], [0.11, 5.9], [0.11, 6.15], [-0.19, 6.15]], [[11.81, 6.0], [12.11, 6.0], [12.11, 6.15], [11.81, 6.15]], [[-0.19, 6.15], [12.11, 6.15], [12.11, 6.45], [-0.19, 6.45]]];
-const STARTER_T1B = [["Sideboard (like BESTÅ) · 180×42", 4.81, 4.95, 270, "TV bench", {"h": 0.48}]];
+const STARTER_T1B = [];
 const FLATS = {
  "STD":{name:"Standard T1",title:"Furnish a standard T1",rooms:ROOMS_STD,open:OPEN_STD,fixed:FIXED_STD,wallfill:[],ceil:()=>2.9,starter:[],vb:{x:-1.3,y:-0.5,w:12.9,h:9.0},C:{x:4.8,z:3.85},span:[12,9],
    eyebrow:"T1 · 80 m² gross, 70 m² of rooms · ceiling 2.9 m · 1 m grid",
@@ -705,6 +706,7 @@ function shape(p){ const w=p.w,d=p.d,x=-w/2,y=-d/2;
     case "desk": return R(x,y,w,d,0.02,"pc")+R(x,y,w,d,0.02,"pc",'style="stroke:var(--ink);stroke-width:.03;fill:none"');
     case "deskc": { const dd=Math.min(0.8,d), cy=y+dd+(d-dd)/2; return R(x,y+dd,w,d-dd,0.02,"rug")+R(x,y,w,dd,0.02,"pc")+R(x,y,w,dd,0.02,"pc",'style="stroke:var(--ink);stroke-width:.03;fill:none"')+`<circle cx="0" cy="${r3(cy)}" r="0.3" class="rug"/>`+R(-0.22,cy-0.22,0.44,0.44,0.08,"pc")+R(-0.22,cy+0.14,0.44,0.08,0,"dk"); }
     case "dark": return R(x,y,w,d,0.02,"dk");
+    case "tvb": { const tw=Math.min(1.67,w); return R(x,y,w,d,0.02,"pc")+R(-tw/2,y+0.04,tw,0.06,0,"dk")+`<path d="M-0.08 ${r3(y+d+0.04)} L0.08 ${r3(y+d+0.04)} L0 ${r3(y+d+0.14)} Z" style="fill:var(--accent)"/>`; }
     case "flx": return R(x,y,w,d,0.02,"dk")+`<circle cx="${r3(x+0.12)}" cy="0" r="0.07" style="fill:var(--furn)"/><circle cx="${r3(x+w-0.12)}" cy="0" r="0.07" style="fill:var(--furn)"/>`;
     case "tvunit": { const t=0.25; return R(x,y,w,d,0.02,"pc")+R(x+t,y+0.03,w-2*t,0.05,0,"dk")+R(x+0.04,y+0.06,t-0.08,d-0.12,0.01,"dk")+R(x+w-t+0.04,y+0.06,t-0.08,d-0.12,0.01,"dk")+`<line x1="${r3(x+t)}" y1="${r3(y)}" x2="${r3(x+t)}" y2="${r3(y+d)}" class="pc"/><line x1="${r3(x+w-t)}" y1="${r3(y)}" x2="${r3(x+w-t)}" y2="${r3(y+d)}" class="pc"/>`; }
     case "rug": return R(x,y,w,d,0.05,"rug");
@@ -1089,7 +1091,7 @@ $("openFile").addEventListener("change",async e=>{ const f=e.target.files&&e.tar
     loadLayout(JSON.parse(txt)); msg(`Opened ${f.name}. Keep editing, then save again.`); }
   catch(err){ msg(`${f.name} does not hold a layout. Open the .json file or the .png picture this page saved.`); } });
 $("lEmpty").onclick=()=>{ pushUndo(); const own=ownedPieces(DB.cur); S.pieces=starter().concat(own); sel=null; render();
-  msg(own.length?"Started over with the furniture you own: SÖDERHAMN sofa, bed, both KALLAX units, desk with its chair, subwoofer, plus the 75″ TV. Delete any you don't want. Undo brings your design back.":DB.cur==="5A"?"Started over with only the owner's kite gear. Undo brings your design back.":"Started over with an empty flat. Undo brings your design back."); };
+  msg(own.length?"Started over with the furniture you own: SÖDERHAMN sofa, bed, both KALLAX units, desk with its chair, subwoofer, plus the TV bench with the 75″ TV. Delete any you don't want. Undo brings your design back.":DB.cur==="5A"?"Started over with only the owner's kite gear. Undo brings your design back.":"Started over with an empty flat. Undo brings your design back."); };
 
 /* ---------- flat choice ---------- */
 document.querySelectorAll("[data-flat]").forEach(b=>b.onclick=()=>{ if(b.dataset.flat===DB.cur) return; if(view==="3d") setView("plan"); applyFlat(b.dataset.flat); render();
@@ -1321,6 +1323,7 @@ function init3D(){
         case "bed": box(0,0,w,d,0.3,0,M("oak")); box(0,0,w-0.06,d-0.06,0.22,0.3,M("linen")); box(0,-d/2+0.04,w,0.08,1.0,0,M("oak")); box(0,(0.75)/2,w,d-0.75,0.06,0.52,M("duvet")); break;
         case "daybed": box(0,0,w,d,0.3,0,M("oak")); box(0,0,w-0.04,d-0.04,0.18,0.3,M("sofa2")); box(-w/2+0.09,0,0.18,d,0.35,0.48,M("sofa")); box(0,-d/2+0.075,w,0.15,0.25,0.48,M("sofa")); box(0,d/2-0.075,w,0.15,0.25,0.48,M("sofa")); break;
         case "desk": box(0,0,w,d,0.04,h-0.04,M(p.c)); [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>box(a*(w/2-0.06),b*(d/2-0.06),0.05,0.05,h-0.04,0,M("dark"))); break;
+        case "tvb": { const tw=Math.min(1.67,w); box(0,0,w,d,h,0,M(p.c)); box(0,-d/2+0.1,0.4,0.2,0.05,h,M("dark")); box(0,-d/2+0.1,tw,0.05,0.96,h+0.06,M("dark")); break; }
         case "deskc": { const dd=Math.min(0.8,d), z0=-d/2+dd/2, zc=-d/2+dd+(d-dd)/2; box(0,z0,w,dd,0.04,h-0.04,M(p.c)); [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>box(a*(w/2-0.06),z0+b*(dd/2-0.06),0.05,0.05,h-0.04,0,M("dark")));
           add(new THREE.CylinderGeometry(0.3,0.3,0.04,5),M("dark"),0,0.06,zc,g); add(new THREE.CylinderGeometry(0.03,0.03,0.38,10),M("steel"),0,0.27,zc,g); box(0,zc,0.46,0.46,0.07,0.46,M("mesh")); box(0,zc+0.2,0.46,0.06,0.6,0.53,M("mesh")); break; }
         case "rect": if(/table/i.test(p.base||"")&&!/side/i.test(p.base||"")){ box(0,0,w,d,0.04,h-0.04,M(p.c)); [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>box(a*(w/2-0.06),b*(d/2-0.06),0.05,0.05,h-0.04,0,M("dark"))); break; }
