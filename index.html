@@ -518,8 +518,8 @@ const STARTER_5A = [
  ["Kiteboard · 145×43",3.31,9.3,90],["Kiteboard · 145×43",3.8,9.3,90],["Kite backpack · 65×40",4.25,8.75,90],["Kite backpack · 65×40",4.25,9.4,90],["Beach bag with kite gear · 70×40",4.25,10.15,90]
 ];
 const OWNED = { // the furniture Jacob owns or is about to buy: part of a fresh start (first visit, or Start over), never pushed into a saved layout
- "5A":[["GRUNNARP sofa-bed (yours) · 232×89",8.2,6.3,270],["TV 75″ · 167×6",11.92,6.3,90],["KALLAX 4×3, 4 cubes on the floor (yours) · 147×39",7.55,6.3,90],["Desk 140×80 (yours) · 140×80",11.53,9.25,270],["Desk chair · 70×70",12.3,9.25,90],["Bed 180×200 (yours) · 196×209",14.7,5.345,180],["KALLAX 2×2 (yours) · 77×39",16.25,3.515,0]],
- "T1B":[["GRUNNARP sofa-bed (yours) · 232×89",8.11,4.95,90],["TV 75″ · 167×6",4.69,4.95,270],["KALLAX 4×3, 4 cubes on the floor (yours) · 147×39",8.75,4.95,270],["Desk 140×80 (yours) · 140×80",10.61,5.3,90],["Desk chair · 70×70",9.86,5.3,270],["Bed 180×200 (yours) · 196×209",2.0,5.1,180],["KALLAX 2×2 (yours) · 77×39",0.35,3.25,270]]
+ "5A":[["GRUNNARP sofa-bed (yours) · 232×89",8.2,6.3,270],["TV 75″ · 167×6",11.92,6.3,90],["Subwoofer · 40×40",11.73,7.55,90],["KALLAX 4×3, 4 cubes on the floor (yours) · 147×39",7.55,6.3,90],["Desk 140×80 (yours) · 140×80",11.53,9.25,270],["Desk chair · 70×70",12.3,9.25,90],["Bed 180×200 (yours) · 196×209",14.7,5.345,180],["KALLAX 2×2 (yours) · 77×39",16.25,3.515,0]],
+ "T1B":[["GRUNNARP sofa-bed (yours) · 232×89",8.11,4.95,90],["TV 75″ · 167×6",4.69,4.95,270],["Subwoofer · 40×40",4.82,3.83,270],["KALLAX 4×3, 4 cubes on the floor (yours) · 147×39",8.75,4.95,270],["Desk 140×80 (yours) · 140×80",10.61,5.3,90],["Desk chair · 70×70",9.86,5.3,270],["Bed 180×200 (yours) · 196×209",2.0,5.1,180],["KALLAX 2×2 (yours) · 77×39",0.35,3.25,270]]
 };
 function ownedPieces(k){ return (OWNED[k]||[]).filter(a=>BYNAME[a[0]]).map(a=>mk(a[0],a[1],a[2],a[3])); }
 let uid=1;
@@ -1088,7 +1088,7 @@ $("openFile").addEventListener("change",async e=>{ const f=e.target.files&&e.tar
     loadLayout(JSON.parse(txt)); msg(`Opened ${f.name}. Keep editing, then save again.`); }
   catch(err){ msg(`${f.name} does not hold a layout. Open the .json file or the .png picture this page saved.`); } });
 $("lEmpty").onclick=()=>{ pushUndo(); const own=ownedPieces(DB.cur); S.pieces=starter().concat(own); sel=null; render();
-  msg(own.length?"Started over with the furniture you own: sofa-bed, bed, both KALLAX units, desk and chair, plus the 75″ TV. Delete any you don't want. Undo brings your design back.":DB.cur==="5A"?"Started over with only the owner's kite gear. Undo brings your design back.":"Started over with an empty flat. Undo brings your design back."); };
+  msg(own.length?"Started over with the furniture you own: sofa-bed, bed, both KALLAX units, desk and chair, subwoofer, plus the 75″ TV. Delete any you don't want. Undo brings your design back.":DB.cur==="5A"?"Started over with only the owner's kite gear. Undo brings your design back.":"Started over with an empty flat. Undo brings your design back."); };
 
 /* ---------- flat choice ---------- */
 document.querySelectorAll("[data-flat]").forEach(b=>b.onclick=()=>{ if(b.dataset.flat===DB.cur) return; if(view==="3d") setView("plan"); applyFlat(b.dataset.flat); render();
