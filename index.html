@@ -576,7 +576,7 @@ const FLATS = {
    extra:`<rect x="9.76" y="1.54" width="0.92" height="0.66" class="sky"/><text class="dim" x="10.22" y="2.36" font-size="0.1" text-anchor="middle">roof window</text><text class="dim" x="16.05" y="7.7" font-size="0.1" text-anchor="middle">shower under roof window</text><line x1="10.9" y1="4.55" x2="10.9" y2="10.4" stroke="var(--accent)" stroke-width="0.02" stroke-dasharray="0.18 0.1" opacity=".6"/><text class="ra" x="6.07" y="4.14" font-size="0.13" text-anchor="middle">front door ↓</text><text class="dim" x="7.03" y="4.95" font-size="0.09" text-anchor="middle">fuse box</text><text class="dim" x="8.78" y="7.72" font-size="0.09" text-anchor="middle">AC above</text><text class="dim" x="10.96" y="10.75" font-size="0.13">roof ridge: highest ceiling, 4.2 m</text><text class="dim" x="5.45" y="7.82" font-size="0.12">ceiling 2.2 m at the glass</text>`,
    compass:[1.4,1.5],scale:[0.8,11.1]},
  "T1B":{name:"T1 with bar",title:"Furnish the T1 with a bar",rooms:ROOMS_T1B,open:OPEN_T1B,fixed:FIXED_T1B,wallfill:WALLFILL_T1B,ceil:()=>2.6,starter:STARTER_T1B,vb:{x:-0.6,y:-0.45,w:14.2,h:7.55},C:{x:6.5,z:3.2},span:[14,7.5],
-   eyebrow:"T1 · open kitchen with a bar · ceiling 2.6 m (assumed) · 1 m grid",
+   eyebrow:"T1 · open kitchen with a bar · ceiling 2.6 m (assumed) · grid 50 cm, bold every 1 m",
    extra:`<text class="ra" x="3.84" y="2.3" font-size="0.12" text-anchor="middle">front door ↑</text><text class="dim" x="12.61" y="3.4" font-size="0.13" text-anchor="middle">balcony</text><text class="dim" x="8.53" y="2.85" font-size="0.09" text-anchor="middle">pier</text><text class="dim" x="11.61" y="2.85" font-size="0.09" text-anchor="middle">pier</text><text class="dim" x="8.0" y="1.38" font-size="0.09" text-anchor="middle">kitchen doorway</text>`,
    compass:null,scale:[0.2,6.85]},
  "3B":{name:"T1",title:"Furnish the T1",rooms:ROOMS_3B,open:OPEN_3B,fixed:FIXED_3B,wallfill:WALLFILL_3B,ceil:()=>3.02,starter:STARTER_3B,vb:{x:3.0,y:-0.3,w:15.0,h:10.2},C:{x:10.5,z:4.9},span:[14.5,10],
@@ -708,6 +708,11 @@ function drawStatic(){
   const showImg=!!(FLAT.img&&custData().showImg&&(EXPORTING?custData().img:IMGURL));
   if(showImg) s+=`<image href="${EXPORTING?custData().img:IMGURL}" x="0" y="0" width="${r3(FLAT.img.w)}" height="${r3(FLAT.img.h)}" preserveAspectRatio="none" opacity="${ROOMS.length?0.55:0.9}" style="pointer-events:none"/>`;
   ROOMS.forEach(r=>{ s+=`<polygon points="${r.p.map(q=>q.join(",")).join(" ")}" fill="var(${KV[r.kind]})"${showImg?' fill-opacity=".45"':""}/>`; });
+  if(ROOMS.length){ // floor grid inside the rooms: 50 cm fine lines, 1 m stronger lines, so distances can be read off the floor
+    s+=`<clipPath id="floorClip">${ROOMS.map(r=>`<polygon points="${r.p.map(q=>q.join(",")).join(" ")}"/>`).join("")}</clipPath><g clip-path="url(#floorClip)" stroke="var(--ink)" pointer-events="none">`;
+    for(let x=gx0;x<=gx1;x+=0.5){ const maj=Math.abs(x-Math.round(x))<1e-6; s+=`<line x1="${x}" y1="${gy0}" x2="${x}" y2="${gy1}" stroke-width="${maj?0.012:0.006}" stroke-opacity="${maj?0.16:0.09}"/>`; }
+    for(let y=gy0;y<=gy1;y+=0.5){ const maj=Math.abs(y-Math.round(y))<1e-6; s+=`<line x1="${gx0}" y1="${y}" x2="${gx1}" y2="${y}" stroke-width="${maj?0.012:0.006}" stroke-opacity="${maj?0.16:0.09}"/>`; }
+    s+=`</g>`; }
   FIXED.forEach(f=>{ const x=f.x-f.w/2,y=f.y-f.d/2;
     if(f.s==="round") s+=`<circle cx="${f.x}" cy="${f.y}" r="${f.w/2}" class="fx"/>`;
     else if(f.s==="tap") s+=`<circle cx="${f.x}" cy="${f.y}" r="0.09" fill="var(--accent)"/><text class="dim" x="${f.x}" y="${f.y-0.14}" font-size="0.12" text-anchor="middle">water</text>`;
